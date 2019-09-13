@@ -7,6 +7,7 @@ describe("Block", () => {
     data = "bar";
     lastBlock = Block.genesis();
     block = Block.mine(lastBlock, data);
+    // console.log(block);
   });
   //for tests
   it("sets `data` to match input ", () => {

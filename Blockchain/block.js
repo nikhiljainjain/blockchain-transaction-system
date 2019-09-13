@@ -1,4 +1,6 @@
-const SHA512 = require("crypto-js/sha512");
+const chainUtil = require("../chain-util");
+const SHA512 = require("crypto-js/sha256");
+
 const { Difficulty, Mine_Rate } = require("../config");
 class Block {
   constructor(index, prevHash, timestamp, hash, data, nonce, difficulty) {
@@ -23,7 +25,7 @@ class Block {
   }
   //first block
   static genesis() {
-    return new Block(1, "0", "0", Block.sHa512(0).toString(), "data", 0, 4);
+    return new Block(1, "0", "0", chainUtil.hash(0), [], 0, 4);
   }
   // for new block
   static mine(lastBlock, data) {
@@ -36,7 +38,7 @@ class Block {
       nonce++;
       timestamp = Date.now();
       difficulty = Block.adjustDifficulty(lastBlock, timestamp);
-      hash = Block.sHa512(
+      hash = Block.hash(
         data,
         prevHash,
         timestamp,
@@ -47,16 +49,16 @@ class Block {
     } while (hash.substring(0, difficulty) !== "0".repeat(difficulty));
     return new this(index, prevHash, timestamp, hash, data, nonce, difficulty);
   }
-  static sHa512(data, prevHash, timestamp, index, nonce, difficulty) {
-    return SHA512(
-      SHA512(`${data}${timestamp}${index}${prevHash}${nonce}${difficulty}`)
-    ).toString();
+  static hash(data, prevHash, timestamp, index, nonce, difficulty) {
+    return chainUtil.hash(
+      `${data}${timestamp}${index}${prevHash}${nonce}${difficulty}`
+    );
   }
   ///
   static blockHash(block) {
     // variables of block copied to below variables
     const { timestamp, index, data, prevHash, nonce, difficulty } = block;
-    return Block.sHa512(data, prevHash, timestamp, index, nonce, difficulty);
+    return Block.hash(data, prevHash, timestamp, index, nonce, difficulty);
   }
   static adjustDifficulty(lastBlock, currentime) {
     let { difficulty } = lastBlock;

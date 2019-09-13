@@ -9,9 +9,13 @@ class BlockChain {
   addblock(data) {
     const block = Block.mine(this.chain[this.chain.length - 1], data);
     this.chain.push(block);
+    // console.log(this.chain);
     return block;
   }
   isValidChain(chain) {
+    // console.log(JSON.stringify(chain[0]));
+    // console.log("--------------------");
+    // console.log(JSON.stringify(Block.genesis()));
     if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
       return false;
     }

@@ -11,24 +11,24 @@ describe("Blockchain", () => {
     expect(bc.chain[0].toString()).toEqual(Block.genesis().toString());
   });
   it("adds a new block", () => {
-    const data = "foo";
+    const data = "data";
     bc.addblock(data);
     expect(bc.chain[bc.chain.length - 1].data).toEqual(data);
   });
   it("valid chain", () => {
-    const data = "foo";
+    const data = "data";
     bc2.addblock(data);
     // console.log(bc2.toString());
     expect(bc.isValidChain(bc2.chain)).toBe(true);
   });
   it("invalid genesis block", () => {
-    bc2.chain[0].data = "not foo";
+    bc2.chain[0].data = "foo";
     expect(bc.isValidChain(bc2.chain)).toBe(false);
   });
   it("invalid chain", () => {
-    bc2.addblock(",xnnn");
+    bc2.addblock("data");
 
-    bc2.chain[1].data = "notfoo";
+    bc2.chain[1].data = "goo";
 
     expect(bc.isValidChain(bc2.chain)).toBe(false);
   });
@@ -41,7 +41,7 @@ describe("Blockchain", () => {
     expect(bc.chain).toEqual(bc2.chain);
   });
   it("does not repalces chain with less length", () => {
-    bc.addblock("goo");
+    bc.addblock("data");
     bc.replaceChain(bc2.chain);
     expect(bc.chain).not.toEqual(bc2.chain);
   });
