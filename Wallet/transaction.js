@@ -6,15 +6,20 @@ class Transaction {
     this.input = null;
     this.outputs = [];
   }
+
   update(senderWallet, amount, recipient) {
     const senderOutput = this.outputs.find(
       output => output.address === senderWallet.publicKey
     );
-    if (amount > senderOutput.amount) {
-      console.log(`Your ${amount} is more than balance`);
+
+    if (amount+1 > senderOutput.amount) {
+      console.log("Your account doesn't enough amount for transaction fees");
+      if (amount > senderOutput.amount)
+        console.log(`Your ${amount} is more than balance`);
       return;
     }
-    senderOutput.amount = senderOutput.amount - amount;
+
+    senderOutput.amount = senderOutput.amount - (amount + 1);
     // console.log(amount);
     this.outputs.push({ amount, address: recipient });
     Transaction.signTransaction(this, senderWallet);
@@ -39,13 +44,16 @@ class Transaction {
     }
     return Transaction.transactionWithOutputs(senderWallet, [
       {
-        amount: senderWallet.balance - amount,
+        amount: senderWallet.balance - amount + 1,
+        //transaction fees dedication for the miner
         address: senderWallet.publicKey
       },
 
       { amount, address: recipient }
     ]);
+
   }
+
   static rewardTransaction(minerWallet, blockchainWallet) {
     return Transaction.transactionWithOutputs(blockchainWallet, [
       { amount: MINING_REWARD, address: minerWallet.publicKey }
